@@ -109,8 +109,9 @@ class Cnn:
     
 
     def genConfig(self):
-        self.trainBatch = 500
-        self.testBatch = 100
+        self.model = os.path.join(self.captcha.caffePath, 'result.caffemodel')
+        self.trainBatch = 200
+        self.testBatch = 40
         self.trainProtoPath = os.path.join(self.captcha.caffePath, 'train.prototxt')
         self.testProtoPath = os.path.join(self.captcha.caffePath, 'test.prototxt')
         self.solverProtoPath = os.path.join(self.captcha.caffePath, 'solver.prototxt')
@@ -142,6 +143,15 @@ class Cnn:
             f.write('max_iter: 10000\n')
             f.write('snapshot: 50000\n')
             f.write('snapshot_prefix:""')
+        self.deployProtoPath = os.path.join(self.captcha.caffePath, 'deploy.prototxt')
+        f = open(self.trainProtoPath)
+        a = f.read()
+        a = a.split('layer')
+        res = '\nlayer {name: "data" type: "Input" top: "data" input_param { shape: { dim: 1 dim: 1 dim: ' + str(self.captcha.height) + ' dim: ' + str(self.captcha.width) + ' }} }\n'
+        for i in a[2:-1]:
+            res += 'layer' + i
+        res += 'layer {  name: "prob"  type: "Softmax"  bottom: "score"  top: "prob"}'
+        open(self.deployProtoPath, 'w+').write(res)
             
   
     
@@ -153,7 +163,6 @@ class Cnn:
         for k, v in solver.net.blobs.items():
             print (k, v.data.shape)
     
-        
         test_interval = 100
         solver.step(1)
         train_loss = np.zeros(niter)
@@ -184,8 +193,31 @@ class Cnn:
         ax1.set_ylabel('train loss')
         ax2.set_ylabel('test accuracy')
         ax2.set_title('Test Accuracy: {:.5f}'.format(test_acc[-1]))
-
+        
+        solver.net.save(self.model)
+        
+    def predict(self, imgPath):
+        time1 = time.time()
+        
+        img = cv2.imread(imgPath, cv2.IMREAD_GRAYSCALE);
+        imgs = self.captcha.splitImage(img)
+        net = caffe.Net(self.deployProtoPath, self.model, caffe.TEST)
+        res = ''
+        for img in imgs:
+            net.blobs['data'].data[...] = np.array([img])
+            output = net.forward()
+            output_prob = output['prob'][0]
+            res += self.decode(output_prob.argmax())
+        
+        time2 = time.time()
+        print 'Predicted in',(time2 - time1) * 1000, 'ms'
+        return res
+        
 cnn = Cnn(Zhengfang())
 # cnn.genLmdb()
 cnn.genConfig()
-cnn.train()
+# cnn.train(100)
+
+print cnn.predict('/home/myths/Desktop/CaptchaRecognition/CaptchaRecognition/data/zhengfang/recognized/7cjm.png')
+
+

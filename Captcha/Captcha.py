@@ -9,7 +9,8 @@ import os, time, shutil, urllib2, cv2
 
 class Captcha(object):
     __metaclass__ = ABCMeta
-    
+    width = 0
+    height = 0
     path = ''
     name = ''
     url = ''

@@ -6,7 +6,8 @@ Created on Jul 15, 2016
 from Captcha import Captcha
 import Util
 class Zhengfang(Captcha):
-    
+    width = 90
+    height = 80
     def __init__(self):
         self.setName("Zhengfang")
         self.setPath("../data/zhengfang/")
@@ -17,6 +18,7 @@ class Zhengfang(Captcha):
         img = Util.resize(img, 500, 100)
         img = Util.otsu(img)
         img = Util.closing(img, 5)
+        
         img1 = img[0:80, 35:125]
         img2 = img[0:80, 115:205]
         img3 = img[0:80, 195:285]
