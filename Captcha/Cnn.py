@@ -3,12 +3,15 @@ Created on Jul 16, 2016
 
 @author: myths
 '''
-import caffe, lmdb, os, shutil, cv2, time
+import caffe, lmdb, os, shutil, cv2, time, sys, Image
 import numpy as np
 from caffe.proto import caffe_pb2 
 from caffe import layers as L, params as P
 import pylab
 from Zhengfang import Zhengfang
+from C7k7k import C7k7k
+from wheel import paths
+from reportlab.lib.units import pica
 class Cnn:
     
     labelMap = {}
@@ -61,7 +64,7 @@ class Cnn:
         lists = os.listdir(self.captcha.splitedPath)
         for picName in lists:
             picPath = os.path.join(self.captcha.splitedPath, picName)
-            pic = cv2.imread(picPath, cv2.IMREAD_GRAYSCALE)
+            pic = np.array(Image.open(picPath).convert('L'))
             data = np.array([pic]).astype('int')
             label = self.encode(picName[0])
             datum = caffe.io.array_to_datum(data, label)   
@@ -152,7 +155,7 @@ class Cnn:
             res += 'layer' + i
         res += 'layer {  name: "prob"  type: "Softmax"  bottom: "score"  top: "prob"}'
         open(self.deployProtoPath, 'w+').write(res)
-            
+        print self.captcha.height,self.captcha.width            
   
     
     def train(self, niter=1000):
@@ -174,8 +177,8 @@ class Cnn:
             train_loss[it] = solver.net.blobs['loss'].data
 
             solver.test_nets[0].forward()
-
-            if it % test_interval == 0:
+            
+            if (it+1) % test_interval == 0:
                 print 'Iteration', it, 'testing...'
                 correct = 0
                 for test_it in xrange(100):
@@ -192,32 +195,52 @@ class Cnn:
         ax1.set_xlabel('iteration')
         ax1.set_ylabel('train loss')
         ax2.set_ylabel('test accuracy')
-        ax2.set_title('Test Accuracy: {:.5f}'.format(test_acc[-1]))
-        
+        ax2.set_title('Test Accuracy: {:.5f}'.format(test_acc[-1]))        
         solver.net.save(self.model)
+        pylab.show()
         
-    def predict(self, imgPath):
-        time1 = time.time()
-        
-        img = cv2.imread(imgPath, cv2.IMREAD_GRAYSCALE);
-        imgs = self.captcha.splitImage(img)
+    def loadNet(self):
         net = caffe.Net(self.deployProtoPath, self.model, caffe.TEST)
+        return net
+    
+    def predict(self, imgPath):
+        net = self.loadNet()
+        time1 = time.time()
+        img = np.array(Image.open(imgPath).convert('L'))
+        imgs = self.captcha.splitImage(img)
         res = ''
         for img in imgs:
             net.blobs['data'].data[...] = np.array([img])
             output = net.forward()
             output_prob = output['prob'][0]
             res += self.decode(output_prob.argmax())
-        
         time2 = time.time()
-        print 'Predicted in',(time2 - time1) * 1000, 'ms'
+        print 'Predicted in', (time2 - time1) * 1000, 'ms'
         return res
+    
+    def predictDir(self, path):
+        net = self.loadNet()
+        lists = os.listdir(path)
+        time1 = time.time()
+        for pic in lists:
+            picPath = os.path.join(path, pic)
+            img = np.array(Image.open(picPath).convert('L'))
+            imgs = self.captcha.splitImage(img)
+            res = ''
+            for img in imgs:
+                net.blobs['data'].data[...] = np.array([img])
+                output = net.forward()
+                output_prob = output['prob'][0]
+                res += self.decode(output_prob.argmax())       
+            os.rename(picPath, os.path.join(path, res + self.captcha.suffix))
+        time2 = time.time()
+        print 'Predicted', len(lists), 'pictures in', (time2 - time1) * 1000, 'ms.'
         
-cnn = Cnn(Zhengfang())
-# cnn.genLmdb()
-cnn.genConfig()
-# cnn.train(100)
-
-print cnn.predict('/home/myths/Desktop/CaptchaRecognition/CaptchaRecognition/data/zhengfang/recognized/7cjm.png')
+if __name__ == '__main__':
+    cnn = Cnn(C7k7k())
+    cnn.genLmdb()
+    cnn.genConfig()
+    cnn.train(200)
+    #cnn.predictDir("/home/myths/Desktop/CaptchaRecognition/CaptchaRecognition/data/7k7k/unrecognized")
 
 

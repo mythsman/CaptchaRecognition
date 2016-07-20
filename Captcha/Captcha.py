@@ -4,7 +4,7 @@ Created on Jul 15, 2016
 @author: myths
 '''
 from abc import ABCMeta, abstractmethod
-import os, time, shutil, urllib2, cv2
+import os, time, shutil, urllib2, cv2, Image, numpy as np
 
 
 class Captcha(object):
@@ -76,7 +76,7 @@ class Captcha(object):
         count = {}
         for f in fileList:
             imgPath = os.path.join(self.recognizedPath, f)
-            img = cv2.imread(imgPath, cv2.IMREAD_GRAYSCALE)
+            img = np.array(Image.open(imgPath).convert('L'))
             imgs = self.splitImage(img)
             name = f.split('.')[0]          
             for i in xrange(len(name)):
