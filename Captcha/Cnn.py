@@ -7,11 +7,7 @@ import caffe, lmdb, os, shutil, cv2, time, sys, Image
 import numpy as np
 from caffe.proto import caffe_pb2 
 from caffe import layers as L, params as P
-import pylab
-from Zhengfang import Zhengfang
-from C7k7k import C7k7k
-from wheel import paths
-from reportlab.lib.units import pica
+
 class Cnn:
     
     labelMap = {}
@@ -28,6 +24,13 @@ class Cnn:
         if not os.path.exists(self.testLmdbPath):
             os.mkdir(self.testLmdbPath)
         self.setMap()
+        self.model = os.path.join(self.captcha.caffePath, 'result.caffemodel')
+        self.trainBatch = 200
+        self.testBatch = 40
+        self.trainProtoPath = os.path.join(self.captcha.caffePath, 'train.prototxt')
+        self.testProtoPath = os.path.join(self.captcha.caffePath, 'test.prototxt')
+        self.solverProtoPath = os.path.join(self.captcha.caffePath, 'solver.prototxt')
+        self.deployProtoPath = os.path.join(self.captcha.caffePath, 'deploy.prototxt')
     
     def setMap(self):
         lists = os.listdir(self.captcha.splitedPath)
@@ -45,7 +48,8 @@ class Cnn:
     def decode(self, cypher):
         return self.cypherMap.get(cypher)
 
-    def genLmdb(self, batch_size=200):
+    def genLmdb(self, batch_size=50):
+        self.genConfig()
         time1 = time.time()
         
         if os.path.exists(self.testLmdbPath):
@@ -112,19 +116,12 @@ class Cnn:
     
 
     def genConfig(self):
-        self.model = os.path.join(self.captcha.caffePath, 'result.caffemodel')
-        self.trainBatch = 200
-        self.testBatch = 40
-        self.trainProtoPath = os.path.join(self.captcha.caffePath, 'train.prototxt')
-        self.testProtoPath = os.path.join(self.captcha.caffePath, 'test.prototxt')
-        self.solverProtoPath = os.path.join(self.captcha.caffePath, 'solver.prototxt')
         if os.path.exists(self.trainProtoPath):
             os.remove(self.trainProtoPath)
         if os.path.exists(self.testProtoPath):
             os.remove(self.testProtoPath)
         if os.path.exists(self.solverProtoPath):
             os.remove(self.solverProtoPath)
-            
         with open(self.trainProtoPath, 'w') as f:
             f.write(str(self.lenet(self.trainLmdbPath, self.trainBatch)))
             
@@ -146,7 +143,6 @@ class Cnn:
             f.write('max_iter: 10000\n')
             f.write('snapshot: 50000\n')
             f.write('snapshot_prefix:""')
-        self.deployProtoPath = os.path.join(self.captcha.caffePath, 'deploy.prototxt')
         f = open(self.trainProtoPath)
         a = f.read()
         a = a.split('layer')
@@ -155,7 +151,6 @@ class Cnn:
             res += 'layer' + i
         res += 'layer {  name: "prob"  type: "Softmax"  bottom: "score"  top: "prob"}'
         open(self.deployProtoPath, 'w+').write(res)
-        print self.captcha.height,self.captcha.width            
   
     
     def train(self, niter=1000):
@@ -187,7 +182,7 @@ class Cnn:
                                    == solver.test_nets[0].blobs['label'].data)
                 test_acc[it // test_interval] = correct / (100.0 * self.testBatch)
                 print 'Test Accuracy: {:.5f}'.format(correct / (100.0 * self.testBatch))
-                
+        '''     
         _, ax1 = pylab.subplots()
         ax2 = ax1.twinx()
         ax1.plot(np.arange(niter), train_loss)
@@ -195,9 +190,10 @@ class Cnn:
         ax1.set_xlabel('iteration')
         ax1.set_ylabel('train loss')
         ax2.set_ylabel('test accuracy')
-        ax2.set_title('Test Accuracy: {:.5f}'.format(test_acc[-1]))        
+        ax2.set_title('Test Accuracy: {:.5f}'.format(test_acc[-1]))  
+		'''      
         solver.net.save(self.model)
-        pylab.show()
+        #pylab.show()
         
     def loadNet(self):
         net = caffe.Net(self.deployProtoPath, self.model, caffe.TEST)
@@ -237,10 +233,10 @@ class Cnn:
         print 'Predicted', len(lists), 'pictures in', (time2 - time1) * 1000, 'ms.'
         
 if __name__ == '__main__':
-    cnn = Cnn(C7k7k())
+    cnn = Cnn(C9you())
     cnn.genLmdb()
-    cnn.genConfig()
     cnn.train(200)
     #cnn.predictDir("/home/myths/Desktop/CaptchaRecognition/CaptchaRecognition/data/7k7k/unrecognized")
-
+    #f=open('res.txt','w')
+    #f.write(cnn.predict("/home/myths/Desktop/2dvf.png"))
 

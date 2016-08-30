@@ -9,25 +9,19 @@ import os, time, shutil, urllib2, cv2, Image, numpy as np
 
 class Captcha(object):
     __metaclass__ = ABCMeta
-    width = 0
-    height = 0
-    path = ''
-    name = ''
-    url = ''
-    unrecognizedPath = ''
-    recognizedPath = ''
-    caffePath = ''
-    splitedPath = ''
-    suffix = ''
-    outputSuffix = '.png'
+    width = 0               #The width of the raw picture
+    height = 0              #The height of the raw picture
+    path = ''               #The path owned by data
+    name = ''               #The captcha name
+    url = ''                #The url of the captcha
+    unrecognizedPath = ''   #The path of unrecognized pictures
+    recognizedPath = ''     #The path of recognized pictures
+    caffePath = ''          #The path of files used by caffe
+    splitedPath = ''        #The path of splited pictures
+    suffix = ''             #The raw suffix of the pictures
+    outputSuffix = '.png'   #The output suffix of the pictures
     
-    def __init__(self):
-        pass
-    
-    def setName(self, name):
-        self.name = name
-        
-    def setPath(self, path):
+    def __init__(self,name,path):
         self.path = path
         self.unrecognizedPath = os.path.join(self.path, 'unrecognized')
         self.recognizedPath = os.path.join(self.path, 'recognized')
@@ -45,14 +39,11 @@ class Captcha(object):
     '''
     def download(self, num):
         time1 = time.time()
-        
         if os.path.exists(self.unrecognizedPath):
             shutil.rmtree(self.unrecognizedPath)
         os.mkdir(self.unrecognizedPath)
-        
         if not os.path.exists(self.recognizedPath):
             os.mkdir(self.recognizedPath)
-        
         for i in xrange(num):
             idx = i + 1
             data = urllib2.urlopen(self.url).read()

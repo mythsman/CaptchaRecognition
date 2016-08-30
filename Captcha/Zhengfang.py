@@ -9,8 +9,7 @@ class Zhengfang(Captcha):
     width = 90
     height = 80
     def __init__(self):
-        self.setName("Zhengfang")
-        self.setPath("../data/zhengfang/")
+        super(Zhengfang,self).__init__("Zhengfang","../data/zhengfang/")
         self.setUrl('http://xk.suda.edu.cn/CheckCode.aspx')
         self.setSuffix(".gif")
         
@@ -18,7 +17,6 @@ class Zhengfang(Captcha):
         img = Util.resize(img, 500, 100)
         img = Util.otsu(img)
         img = Util.closing(img, 5)
-        
         img1 = img[0:80, 35:125]
         img2 = img[0:80, 115:205]
         img3 = img[0:80, 195:285]
@@ -29,3 +27,8 @@ class Zhengfang(Captcha):
 if  "__main__" == __name__:
     zhengfang = Zhengfang()
     zhengfang.preprocess()
+    cnn = Cnn(zhengfang)
+    #cnn.genLmdb()
+    #cnn.train(200)
+    #cnn.predictDir("/home/myths/Desktop/CaptchaRecognition/data/Zhengfang/unrecognized")
+
