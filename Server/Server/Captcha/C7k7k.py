@@ -4,14 +4,15 @@ Created on Jul 15, 2016
 @author: myths
 '''
 from Captcha import Captcha
-from Cnn mport Cnn
+from Cnn import Cnn
 import Util
 class C7k7k(Captcha):
     
     def __init__(self):
-        super(C7k7k,self).__init__("7k7k","../data/7k7k/")
-        self.setUrl('http://zc.7k7k.com/authcode')
-        self.setSuffix(".png")
+        super(C7k7k,self).__init__('7k7k')
+        self.comment='7k7k'
+        self.url='http://zc.7k7k.com/authcode'
+        self.suffix=".png"
         self.width=150
         self.height=90
         
@@ -27,8 +28,9 @@ class C7k7k(Captcha):
         
 if  "__main__" == __name__:
     c7k7k = C7k7k()
-    c7k7k.preprocess()
+    #c7k7k.preprocess()
     cnn = Cnn(c7k7k)
     #cnn.genLmdb()
     #cnn.train(200)
+    print cnn.predict('/home/myths/Desktop/CaptchaRecognition/Server/Server/static/data/7k7k/unrecognized/2a37.png')
     #cnn.predictDir("/home/myths/Desktop/CaptchaRecognition/data/7k7k/unrecognized")

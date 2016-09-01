@@ -1,17 +1,5 @@
-layer {
-  name: "data"
-  type: "Data"
-  top: "data"
-  top: "label"
-  transform_param {
-    scale: 0.00392156862745
-  }
-  data_param {
-    source: "../data/zhengfang/caffe/test_lmdb"
-    batch_size: 40
-    backend: LMDB
-  }
-}
+
+layer {name: "data" type: "Input" top: "data" input_param { shape: { dim: 1 dim: 1 dim: 90 dim: 150 }} }
 layer {
   name: "conv1"
   type: "Convolution"
@@ -84,16 +72,10 @@ layer {
   bottom: "fc1"
   top: "score"
   inner_product_param {
-    num_output: 33
+    num_output: 27
     weight_filler {
       type: "xavier"
     }
   }
 }
-layer {
-  name: "loss"
-  type: "SoftmaxWithLoss"
-  bottom: "score"
-  bottom: "label"
-  top: "loss"
-}
+layer {  name: "prob"  type: "Softmax"  bottom: "score"  top: "prob"}

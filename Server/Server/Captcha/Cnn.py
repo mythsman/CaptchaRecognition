@@ -31,6 +31,7 @@ class Cnn:
         self.testProtoPath = os.path.join(self.captcha.caffePath, 'test.prototxt')
         self.solverProtoPath = os.path.join(self.captcha.caffePath, 'solver.prototxt')
         self.deployProtoPath = os.path.join(self.captcha.caffePath, 'deploy.prototxt')
+        self.resultPath=os.path.join(self.captcha.caffePath,'accuracy.txt')
     
     def setMap(self):
         lists = os.listdir(self.captcha.splitedPath)
@@ -193,7 +194,9 @@ class Cnn:
         ax2.set_title('Test Accuracy: {:.5f}'.format(test_acc[-1]))  
 		'''      
         solver.net.save(self.model)
-        #pylab.show()
+        f=open(self.resultPath,'w')
+        f.write(test[-1])
+        
         
     def loadNet(self):
         net = caffe.Net(self.deployProtoPath, self.model, caffe.TEST)
@@ -211,8 +214,7 @@ class Cnn:
             output_prob = output['prob'][0]
             res += self.decode(output_prob.argmax())
         time2 = time.time()
-        print 'Predicted in', (time2 - time1) * 1000, 'ms'
-        return res
+        return (res,(time2-time1)*1000)
     
     def predictDir(self, path):
         net = self.loadNet()

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <title>Captcha Recognition</title>
+    <link href="static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+			
+		.container{
+	    width:30%;
+			padding:0px 0px 0px 0px;
+	    text-align:center;
+			margin-top:100px;
+		}
+		.img-thumbnail{
+			padding:2px 2px 2px 2px;
+		}
+		.btn{
+			font-size:16px;
+			font-weight:bold;
+		}	
+    </style>
+    <script src='static/jQuery/jquery.min.js'></script>
+    <script src='static/jQuery/jquery.form.js'></script>
+    <script src='static/bootstrap/js/bootstrap.js'></script>
+		<script>
+			$(document).ready(function(){
+				$('#fileBtn').click(function(){
+					$('#fileInput').click();
+				});
+				$('#fileInput').change(function(){
+					$('#fileBtn').html($(this).val().split('\\')[2]);
+					$('#mode').val('0');
+					$('#submitInput').click();
+				});
+				$('#submitBtn').click(function(){
+					$('#mode').val('1');
+					$('#submitBtn').html('查询中。。。');
+					$('#submitBtn').attr('disabled',true);
+					$('#submitInput').click();
+				});
+				$('#form').ajaxForm(function(data) { 
+        	if(data['mode']=='0'){
+						$('#preview').attr('src',data['src']);
+					}else{
+						$('#res').html(data['res']);
+						$('#time').html(data['time']+'ms');
+						$('#submitBtn').attr('disabled',false);
+						$('#submitBtn').html('查询');
+					}				
+        });
+				$.ajaxSetup({
+    			data: {csrfmiddlewaretoken:'{{ csrf_token }}'},
+				});
+				$('#select').change(function(){
+					$.post('/',{'mode':'2','name':$(this).val()},function(data){
+						$('#img1').attr('src',data['src1']);
+						$('#img2').attr('src',data['src2']);
+						$('#src').val(data['url']);
+					});
+				});
+				$('#src').click(function(){
+					window.open($(this).val());	
+				});
+				$('#select').trigger('change');
+			});
+		</script>
+  </head>
+	<body>
+	<div class="container">
+		<h1>基于Caffe的验证码识别系统<small>v1.0</small></h1>
+		<br>
+		<form id='form' class="form-submit" action='/' role='form' method='post' enctype='multipart/form-data'>
+			{% csrf_token %}
+			<div class='row'>
+				<label class='col-md-4 label label-default input-lg'><h4>类别：</h4></label>
+				<select id='select' class='col-md-8 input-lg btn btn-default' name='type'>
+					{% for name,comment in lists.items %}
+						<option value='{{ name }}' class='btn btn-default'>{{ comment }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class='row'>
+				<label class='col-md-4 label label-default input-lg'><h4>样例：</h4></label>
+						<img id='img1' src=""  class="img-thumbnail col-md-4 input-lg">
+						<img id='img2' src=""  class="img-thumbnail col-md-4 input-lg">
+			</div>
+			<div class='row'>
+				<label class='col-md-4 label label-default input-lg'><h4>来源：</h4></label>
+				<button id='src'  class='col-md-8 btn btn-default input-lg' type='button' >点击查看</button>
+			</div>
+			<div class='row'>
+				<label class='col-md-4 label label-default input-lg'><h4>准确率：</h4></label>
+				<button class='col-md-8 btn btn-default input-lg' type='button' disabled>98%</button>
+			</div>
+			<div class='row'>
+				<input id='fileInput' type='file' name='file' accept="image/png,image/gif,img/jpg" style="display:none;">
+				<label class='col-md-4 label label-default input-lg'><h4>提交文件：</h4></label>
+				<button id='fileBtn' class='col-md-8 btn btn-default input-lg' type='button'>点击选择文件</button>
+			</div>
+			<div class='row'>
+				<label class='col-md-4 label label-default input-lg'><h4>图片预览：</h4></label>
+					<img id="preview" src=""  class="img-thumbnail col-md-4 col-md-offset-2 input-lg">
+			</div>
+			<div class='row'>
+				<input id='submitInput' type='submit' style="display:none;">
+				<input id='mode' name='mode' value='' style="display:none;">
+				<button id='submitBtn' class="col-md-12 btn  btn-primary input-lg" type="button" >查询</button>
+			</div>
+			<div class='row' style='margin-top:5px;'>
+				<label class='col-md-4 label label-default input-lg'><h4>识别结果：</h4></label>
+				<button id='res' class='col-md-8 btn btn-default input-lg' type='button' disabled></button>
+			</div>
+			<div class='row'>
+				<label class='col-md-4 label label-default input-lg'><h4>计算时间：</h4></label>
+				<button id='time' class='col-md-8 btn btn-default input-lg' type='button' disabled></button>
+			</div>
+		</form>
+	</div>
+  </body>
+</html>

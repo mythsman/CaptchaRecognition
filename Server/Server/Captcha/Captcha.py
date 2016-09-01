@@ -13,6 +13,7 @@ class Captcha(object):
     height = 0              #The height of the raw picture
     path = ''               #The path owned by data
     name = ''               #The captcha name
+    comment=''              #The comment 
     url = ''                #The url of the captcha
     unrecognizedPath = ''   #The path of unrecognized pictures
     recognizedPath = ''     #The path of recognized pictures
@@ -21,19 +22,18 @@ class Captcha(object):
     suffix = ''             #The raw suffix of the pictures
     outputSuffix = '.png'   #The output suffix of the pictures
     
-    def __init__(self,name,path):
-        self.path = path
+    def __init__(self,name):
+        self.name=name
+        self.path=os.path.join('static/data',self.name)
+        if os.path.exists(os.path.join('..',self.path)):
+            self.path=os.path.join('..',self.path)
+        else:
+            self.path=os.path.join('Server',self.path)
         self.unrecognizedPath = os.path.join(self.path, 'unrecognized')
         self.recognizedPath = os.path.join(self.path, 'recognized')
         self.splitedPath = os.path.join(self.path, "splited");
         self.caffePath = os.path.join(self.path, "caffe");
     
-    def setUrl(self, url):    
-        self.url = url
-    
-    def setSuffix(self, suffix):
-        self.suffix = suffix
-        
     '''
     Downloads captcha pictures from server. 
     '''

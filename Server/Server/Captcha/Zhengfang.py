@@ -1,17 +1,15 @@
-'''
-Created on Jul 15, 2016
-
-@author: myths
-'''
+#coding=utf-8
 from Captcha import Captcha
-import Util
+from Cnn import Cnn
+import Util,sys
 class Zhengfang(Captcha):
-    width = 90
-    height = 80
     def __init__(self):
-        super(Zhengfang,self).__init__("Zhengfang","../data/zhengfang/")
-        self.setUrl('http://xk.suda.edu.cn/CheckCode.aspx')
-        self.setSuffix(".gif")
+        super(Zhengfang,self).__init__('zhengfang')
+        self.comment='正方教务系统'
+        self.url='http://xk.suda.edu.cn/CheckCode.aspx'
+        self.suffix=".gif"
+        self.width=90
+        self.height=80
         
     def splitImage(self, img):
         img = Util.resize(img, 500, 100)
@@ -28,7 +26,7 @@ if  "__main__" == __name__:
     zhengfang = Zhengfang()
     zhengfang.preprocess()
     cnn = Cnn(zhengfang)
-    #cnn.genLmdb()
-    #cnn.train(200)
-    #cnn.predictDir("/home/myths/Desktop/CaptchaRecognition/data/Zhengfang/unrecognized")
+    cnn.genLmdb()
+    cnn.train(1000)
+    #print cnn.predict("../static/data/zhengfang/recognized/aqh1.png")
 

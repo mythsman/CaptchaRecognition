@@ -8,9 +8,10 @@ import Util
 class C9you(Captcha):
     
     def __init__(self):
-        super(C9you,self).__init__("9you","../data/9you/")
-        self.setUrl('https://login.passport.9you.com/identifyingCode.jsp')
-        self.setSuffix(".jpg")
+        super(C9you,self).__init__("9you","../data/static/9you/")
+        self.comment='久游网'
+        self.url='https://login.passport.9you.com/identifyingCode.jsp'
+        self.suffix=".jpg"
         self.width=110
         self.height=100
         

@@ -1,5 +1,5 @@
-train_net: "../data/zhengfang/caffe/train.prototxt"
-test_net:"../data/zhengfang/caffe/test.prototxt"
+train_net: "../static/data/zhengfang/caffe/train.prototxt"
+test_net:"../static/data/zhengfang/caffe/test.prototxt"
 test_iter: 100
 test_interval: 500
 base_lr: 0.001
