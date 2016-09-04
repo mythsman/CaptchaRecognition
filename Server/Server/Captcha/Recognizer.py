@@ -1,16 +1,33 @@
+#coding=utf-8
 from C7k7k import C7k7k
 from Zhengfang import Zhengfang
+from Csdn import Csdn
 from Cnn import Cnn
 
 class Recognizer():
-    captcha={}
+    names=[]
     def __init__(self):
-        self.captcha['7k7k']=C7k7k()
-        self.captcha['zhengfang']=Zhengfang()
+        self.names.append('7k7k')
+        self.names.append('zhengfang')
+        self.names.append('csdn')
 
     def get(self,name):
-        return self.captcha[name]
-    
+        if name=='7k7k':
+            return C7k7k()
+        elif name=='zhengfang':
+            return Zhengfang()
+        elif name=='csdn':
+            return Csdn()
+        
     def recognize(self,name,url):
-        return Cnn(self.captcha[name]).predict(url)
+        cnn = Cnn()
+        cnn.load(self.get(name))
+        res=cnn.predict(url)
+        return res
 
+if __name__=='__main__':
+    cnn=Cnn()
+    cnn.load(Zhengfang())
+    print cnn.predict('/home/myths/Desktop/CaptchaRecognition/Server/Server/static/data/zhengfang/recognized/bcqu.png')
+    cnn.load(C7k7k()) 
+    print cnn.predict('/home/myths/Desktop/CaptchaRecognition/Server/Server/static/data/7k7k/unrecognized/c8d6.png')

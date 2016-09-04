@@ -1,8 +1,4 @@
-'''
-Created on Jul 15, 2016
-
-@author: myths
-'''
+#coding=utf-8
 from Captcha import Captcha
 from Cnn import Cnn
 import Util
@@ -18,8 +14,8 @@ class C7k7k(Captcha):
         
     def splitImage(self, img):
         img = Util.resize(img, 500, 100)
-        img = Util.otsu(img)
-        img = Util.closing(img, 3)
+        img = Util.bersen(img,41)
+        img = Util.closing(img, 5)
         img1 = img[0:90, 25:175]
         img2 = img[0:90, 125:275]
         img3 = img[0:90, 225:375]
@@ -31,6 +27,6 @@ if  "__main__" == __name__:
     #c7k7k.preprocess()
     cnn = Cnn(c7k7k)
     #cnn.genLmdb()
-    #cnn.train(200)
+    #cnn.train(500)
     print cnn.predict('/home/myths/Desktop/CaptchaRecognition/Server/Server/static/data/7k7k/unrecognized/2a37.png')
     #cnn.predictDir("/home/myths/Desktop/CaptchaRecognition/data/7k7k/unrecognized")

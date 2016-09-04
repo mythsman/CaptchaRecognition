@@ -1,4 +1,4 @@
-#coding:utf-8
+#coding=utf-8
 from django.http import HttpResponse
 from django.shortcuts import render
 from Captcha.C7k7k import C7k7k
@@ -46,7 +46,6 @@ def index(request):
     else:
         lists={}
         recognizer=Recognizer()
-        for (name,captcha) in recognizer.captcha.items():
-            lists[captcha.name]=captcha.comment
-        print lists
+        for name in recognizer.names:
+            lists[name]=recognizer.get(name).comment
         return render(request, 'index.html',{'lists':lists})

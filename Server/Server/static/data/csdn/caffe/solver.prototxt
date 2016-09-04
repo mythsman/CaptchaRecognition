@@ -1,5 +1,5 @@
-train_net: "../static/data/7k7k/caffe/train.prototxt"
-test_net:"../static/data/7k7k/caffe/test.prototxt"
+train_net: "../static/data/csdn/caffe/train.prototxt"
+test_net:"../static/data/csdn/caffe/test.prototxt"
 test_iter: 100
 test_interval: 500
 base_lr: 0.001

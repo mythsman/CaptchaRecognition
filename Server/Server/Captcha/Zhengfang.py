@@ -24,9 +24,9 @@ class Zhengfang(Captcha):
    
 if  "__main__" == __name__:
     zhengfang = Zhengfang()
-    zhengfang.preprocess()
+    #zhengfang.preprocess()
     cnn = Cnn(zhengfang)
-    cnn.genLmdb()
-    cnn.train(1000)
-    #print cnn.predict("../static/data/zhengfang/recognized/aqh1.png")
+    #cnn.genLmdb()
+    #cnn.train(1000)
+    print cnn.predict("../static/data/zhengfang/recognized/aqh1.png")
 

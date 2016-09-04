@@ -1,11 +1,7 @@
-'''
-Created on Jul 16, 2016
-
-@author: myths
-'''
+#coding=utf-8
 import caffe, lmdb, os, shutil, cv2, time, sys, Image
 import numpy as np
-from caffe.proto import caffe_pb2 
+from caffe.proto import caffe_pb2
 from caffe import layers as L, params as P
 
 class Cnn:
@@ -13,7 +9,9 @@ class Cnn:
     labelMap = {}
     cypherMap = {}
     
-    def __init__(self, captcha):
+    def __init__(self):
+        pass    
+    def load(self, captcha):
         self.captcha = captcha
         if not os.path.exists(self.captcha.caffePath):
             os.mkdir(self.captcha.caffePath)
@@ -32,15 +30,18 @@ class Cnn:
         self.solverProtoPath = os.path.join(self.captcha.caffePath, 'solver.prototxt')
         self.deployProtoPath = os.path.join(self.captcha.caffePath, 'deploy.prototxt')
         self.resultPath=os.path.join(self.captcha.caffePath,'accuracy.txt')
-    
+
     def setMap(self):
         lists = os.listdir(self.captcha.splitedPath)
+        self.labelMap={}
+        self.cypherMap={}
         for item in lists:
             label = item[0]
             if not self.labelMap.has_key(label):
                 self.labelMap[label] = len(self.labelMap)
         for key, value in self.labelMap.items():
             self.cypherMap[value] = key
+        print len(self.labelMap)
         
         
     def encode(self, label):
@@ -195,7 +196,7 @@ class Cnn:
 		'''      
         solver.net.save(self.model)
         f=open(self.resultPath,'w')
-        f.write(test[-1])
+        f.write(str(test_acc[-1]))
         
         
     def loadNet(self):
@@ -235,10 +236,4 @@ class Cnn:
         print 'Predicted', len(lists), 'pictures in', (time2 - time1) * 1000, 'ms.'
         
 if __name__ == '__main__':
-    cnn = Cnn(C9you())
-    cnn.genLmdb()
-    cnn.train(200)
-    #cnn.predictDir("/home/myths/Desktop/CaptchaRecognition/CaptchaRecognition/data/7k7k/unrecognized")
-    #f=open('res.txt','w')
-    #f.write(cnn.predict("/home/myths/Desktop/2dvf.png"))
-
+    pass

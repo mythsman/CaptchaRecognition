@@ -7,7 +7,7 @@ layer {
     scale: 0.00392156862745
   }
   data_param {
-    source: "../static/data/7k7k/caffe/test_lmdb"
+    source: "../static/data/csdn/caffe/test_lmdb"
     batch_size: 40
     backend: LMDB
   }
@@ -84,7 +84,7 @@ layer {
   bottom: "fc1"
   top: "score"
   inner_product_param {
-    num_output: 31
+    num_output: 35
     weight_filler {
       type: "xavier"
     }
