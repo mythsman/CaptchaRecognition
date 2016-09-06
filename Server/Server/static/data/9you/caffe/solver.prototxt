@@ -1,5 +1,5 @@
-train_net: "../data/9you/caffe/train.prototxt"
-test_net:"../data/9you/caffe/test.prototxt"
+train_net: "../static/data/9you/caffe/train.prototxt"
+test_net:"../static/data/9you/caffe/test.prototxt"
 test_iter: 100
 test_interval: 500
 base_lr: 0.001

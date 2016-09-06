@@ -11,6 +11,7 @@ class Cnn:
     
     def __init__(self):
         pass    
+
     def load(self, captcha):
         self.captcha = captcha
         if not os.path.exists(self.captcha.caffePath):
@@ -41,7 +42,6 @@ class Cnn:
                 self.labelMap[label] = len(self.labelMap)
         for key, value in self.labelMap.items():
             self.cypherMap[value] = key
-        print len(self.labelMap)
         
         
     def encode(self, label):
@@ -217,8 +217,10 @@ class Cnn:
         time2 = time.time()
         return (res,(time2-time1)*1000)
     
-    def predictDir(self, path):
+    def predictDir(self, path=''):
         net = self.loadNet()
+        if path=='':
+            path=self.captcha.unrecognizedPath
         lists = os.listdir(path)
         time1 = time.time()
         for pic in lists:
