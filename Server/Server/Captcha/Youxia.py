@@ -9,24 +9,24 @@ class Youxia(Captcha):
         self.comment='游侠网'
         self.url='http://passport.ali213.net/seccode.php'
         self.suffix=".png"
-        self.width=150
-        self.height=90
+        self.width=30
+        self.height=20
         
     def splitImage(self, img):
-        img = Util.resize(img, 500, 100)
-        img = Util.bersen(img,33)
-        img = Util.closing(img, 7)
+        img = Util.resize(img, 100, 20)
+        img = Util.bersen(img,7)
         imgT = img[0:1 ,0:1]
-        img1 = img[0:100, 0:150]
-        img2 = img[0:100, 110:260]
-        img3 = img[0:100, 240:390]
-        img4 = img[0:100, 350:500]
+        img1 = img[0:20, 0:30]
+        img2 = img[0:20, 22:52]
+        img3 = img[0:20, 48:78]
+        img4 = img[0:20, 70:100]
         return [img1, img2, img3, img4]
         
 if  "__main__" == __name__:
     youxia = Youxia()
-    #youxia.preprocess()
-    cnn = Cnn(youxia)
+    youxia.preprocess()
+    cnn = Cnn()
+    cnn.load(youxia)
     cnn.genLmdb()
-    cnn.train(100)
-    #cnn.predictDir("/home/myths/Desktop/CaptchaRecognition/data/7k7k/unrecognized")
+    cnn.train(4000)
+    #cnn.predictDir()

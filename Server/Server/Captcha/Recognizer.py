@@ -3,6 +3,7 @@ from C7k7k import C7k7k
 from Zhengfang import Zhengfang
 from Csdn import Csdn
 from C9you import C9you
+from Youxia import Youxia
 from Cnn import Cnn
 
 class Recognizer():
@@ -12,6 +13,7 @@ class Recognizer():
         self.names.append('zhengfang')
         self.names.append('csdn')
         self.names.append('9you')
+        self.names.append('youxia')
 
     def get(self,name):
         if name=='7k7k':
@@ -22,6 +24,8 @@ class Recognizer():
             return Csdn()
         elif name=='9you':
             return C9you()
+        elif name=='youxia':
+            return Youxia()
         
     def recognize(self,name,url):
         cnn = Cnn()
