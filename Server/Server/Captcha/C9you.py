@@ -24,10 +24,10 @@ class C9you(Captcha):
         
 if  "__main__" == __name__:
     c9you = C9you()
-    c9you.preprocess()
-    #cnn = Cnn()
-    #cnn.load(c9you)
-    #cnn.genLmdb()
-    #cnn.train(4000)
+    #c9you.preprocess()
+    cnn = Cnn()
+    cnn.load(c9you)
+    cnn.genLmdb()
+    cnn.train(4900)
     #cnn.predictDir()
 

@@ -57,6 +57,7 @@
 						$('#img1').attr('src',data['src1']);
 						$('#img2').attr('src',data['src2']);
 						$('#src').val(data['url']);
+						$('#acc').html(data['acc'])
 					});
 				});
 				$('#src').click(function(){
@@ -91,7 +92,7 @@
 			</div>
 			<div class='row'>
 				<label class='col-md-4 label label-default input-lg'><h4>准确率：</h4></label>
-				<button class='col-md-8 btn btn-default input-lg' type='button' disabled>98%</button>
+				<button id='acc' class='col-md-8 btn btn-default input-lg' type='button' disabled></button>
 			</div>
 			<div class='row'>
 				<input id='fileInput' type='file' name='file' accept="image/png,image/gif,image/jpeg" style="display:none;">
