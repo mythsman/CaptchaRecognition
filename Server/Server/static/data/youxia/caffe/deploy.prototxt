@@ -1,5 +1,5 @@
 
-layer {name: "data" type: "Input" top: "data" input_param { shape: { dim: 1 dim: 1 dim: 20 dim: 30 }} }
+layer {name: "data" type: "Input" top: "data" input_param { shape: { dim: 1 dim: 1 dim: 32 dim: 32 }} }
 layer {
   name: "conv1"
   type: "Convolution"
@@ -7,7 +7,7 @@ layer {
   top: "conv1"
   convolution_param {
     num_output: 20
-    kernel_size: 3
+    kernel_size: 5
     weight_filler {
       type: "xavier"
     }
@@ -54,7 +54,7 @@ layer {
   bottom: "pool2"
   top: "fc1"
   inner_product_param {
-    num_output: 500
+    num_output: 1350
     weight_filler {
       type: "xavier"
     }

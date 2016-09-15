@@ -9,8 +9,8 @@ class C7k7k(Captcha):
         self.comment='7k7k'
         self.url='http://zc.7k7k.com/authcode'
         self.suffix=".png"
-        self.width=30
-        self.height=20
+        self.width=32
+        self.height=32
         
     def splitImage(self, img):
         img = Util.resize(img, 100, 20)
@@ -20,6 +20,11 @@ class C7k7k(Captcha):
         img2 = img[0:20, 25:55]
         img3 = img[0:20, 45:75]
         img4 = img[0:20, 65:95]
+        img1=Util.resize(img1,32,32)
+        img2=Util.resize(img2,32,32)
+        img3=Util.resize(img3,32,32)
+        img4=Util.resize(img4,32,32)
+    
         return [img1, img2, img3, img4]
         
 if  "__main__" == __name__:
